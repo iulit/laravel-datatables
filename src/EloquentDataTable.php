@@ -164,6 +164,16 @@ class EloquentDataTable extends QueryDataTable
                     $foreign   = $model->getQualifiedForeignKeyName();
                     $other     = $model->getQualifiedParentKeyName();
                     break;
+                    
+                case $model instanceof MorphTo:
+                    // perform the query, there seems no way around to get the relation
+                    $modelInstance  = $model->first();
+                    $relatedModel   = new $modelInstance->{$model->getMorphType()};
+
+                    $table          = $relatedModel->getTable();
+                    $foreign        = $relatedModel->getQualifiedKeyName();
+                    $other          = $model->getQualifiedForeignKeyName();
+                    break;
 
                 case $model instanceof BelongsTo:
                     $table     = $model->getRelated()->getTable();
